@@ -77,6 +77,15 @@ Exceptions to a standard Errno values are noted.
 
 # SUPPORTED INTERFACES #
 
+## Creating or a pmemfile pool ##
+```c
+PMEMfilepool *pmemfile_mkfs(const char *pathname, size_t poolsize, mode_t mode);
+PMEMfilepool *pmemfile_pool_open(const char *pathname);
+```
+
+To create or open an existing pool use the functions above. The PMEMfile * is used in later calls to identify the pool for which the operation applies.
+
+
 ## Access Management ##
 ```c
 int pmemfile_access(PMEMfilepool *pfp, const char *path, mode_t mode);
@@ -308,6 +317,5 @@ int pmemfile_utimensat(PMEMfilepool *pfp, PMEMfile *dir, const char *pathname,
                 const struct timespec times[2], int flags);
 int pmemfile_futimens(PMEMfilepool *pfp, PMEMfile *file,
                 const struct timespec times[2]);
-mode_t pmemfile_umask(PMEMfilepool *pfp, mode_t mask);
 
 ```

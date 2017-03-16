@@ -49,7 +49,7 @@ add_custom_target(man2txts)
 
 function(generate_man2txt name)
 	add_custom_target(man2txt-${name}
-			COMMAND man
+			COMMAND "/usr/bin/man" 
 			${CMAKE_CURRENT_SOURCE_DIR}/generated/${name} > ${CMAKE_CURRENT_SOURCE_DIR}/generated/${name}.txt)
 	add_dependencies(man2txts man2txt-${name})
 endfunction()
