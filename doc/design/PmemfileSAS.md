@@ -5,8 +5,8 @@ Access to Persistent Memory via POSIX File System Interfaces.
 
  {#section .ListParagraph .TOCHeader}
 
-<span id="_Toc452012196" class="anchor"><span id="_Toc480386173" class="anchor"></span></span>Document Revision History
-=======================================================================================================================
+Document Revision History
+=========================
 
 +--------------------------------------+--------------------------------------+
 | **Version **                         | **Document Changes**                 |
@@ -88,14 +88,12 @@ Access to Persistent Memory via POSIX File System Interfaces.
 | V.4 4/19/17                          | More cleanup for github publication. |
 +--------------------------------------+--------------------------------------+
 
-<span id="_Toc452012197" class="anchor"><span id="_Toc480386174" class="anchor"></span></span>Document Overview
-===============================================================================================================
+# Document Overview #
 
 This document describes the SW Architecture and High Level Design of the
 Pmemfile PMEM project.
 
-Terminology
-===========
+# Terminology #
 
 This section outlines the major terminology and glossary items utilized
 throughout this architect specification. See the figure below for a
@@ -124,8 +122,7 @@ terminology table.
 |                                      | Unix operating systems               |
 +--------------------------------------+--------------------------------------+
 
-<span id="_Toc452012199" class="anchor"><span id="_Toc480386176" class="anchor"></span></span>What is Pmemfile?
-===============================================================================================================
+What is Pmemfile?
 
 Pmemfile is a PMEM (<https://github.com/pmem>) project which provides a
 POSIX –like file system interface to consumers while providing NVM
@@ -1254,6 +1251,7 @@ unless otherwise specified.
 The superblock is a unique data structure in a filesystem. It is the top
 level data structure which describes high level metadata about the
 pmemfile file system.
+```c
 
 struct pmemfile\_super {
 
@@ -1279,6 +1277,7 @@ char pad\[4096
 - 16 /\* toid \*/\];
 
 };
+```
 
 #### Valid states for pmemfile\_super members
 
