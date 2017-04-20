@@ -9,7 +9,7 @@ Document Revision History
 =========================
 
 +--------------------------------------+--------------------------------------+
-| **Version **                         | **Document Changes**                 |
+| Version                              | Document Changes                     |
 +======================================+======================================+
 | V.3 3/23/16                          | Initial document with completed high |
 |                                      | level interfaces, use cases, and     |
