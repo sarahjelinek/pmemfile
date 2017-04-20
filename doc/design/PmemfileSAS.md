@@ -8,30 +8,85 @@ Access to Persistent Memory via POSIX File System Interfaces.
 <span id="_Toc452012196" class="anchor"><span id="_Toc480386173" class="anchor"></span></span>Document Revision History
 =======================================================================================================================
 
-  **Version **   **Document Changes**
-  -------------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  V.3 3/23/16    Initial document with completed high level interfaces, use cases, and theory of operations.
-  V.3 5/17/16    Made more changes to on media structures.
-  V.3 5/26/16    Additional modifications to on media format.
-  V.3 5/31/16    Additional changes and additions to on media format section. Modified Pmemfile\_ Interception section to add more detail to the architecture chosen.
-  V.4 6/6/16     Completed initial persistent data structure definitions. Added open items section.
-  V.4 6/7/16     Finished persistent data structure design. Added file structure to volatile section.
-  V.4 6/8/16     More updates
-  V.4 6/14/16    Changes to the volatile and persistent structures. Added more details to the Pmemfile\_ Intercept Library. Added diagram to show dependency resolution for lseek + open ().
-  V.4 10/3/16    Finalized volatile and persistent data structure layout. Modified interception library with new architecture.
-  V.4 10/17/16   Modified interception layer with new architecture.
-  V.4 10/26/16   Changes based on internal review with pmemfile team.
-  V.4 11/8/16    More changes based on internal review with pmemfile team
-  V.4 11/17/16   Finished persistent data structure section.
-  V.4 11/28/16   Updated based on review by pmemfile team
-  V.4 1/4/17     Updated persistent data structures
-  V.4 2/21/17    Added more detail to Section 7, design
-  V.4 3/14/17    Added more detail to valid states for persistent data structure members
-  V.4 3/16/17    Completed man pages and added links to document
-  V.4 3/21/17    Added Section 11.4, Consistency Checking
-  V.4 4/5/17     Modified High Level Architecture Diagram to be more correct and specific
-  V.4 4/10/17    Cleaned up for github publication.
-  V.4 4/19/17    More cleanup for github publication.
++--------------------------------------+--------------------------------------+
+| **Version **                         | **Document Changes**                 |
++======================================+======================================+
+| V.3 3/23/16                          | Initial document with completed high |
+|                                      | level interfaces, use cases, and     |
+|                                      | theory of operations.                |
++--------------------------------------+--------------------------------------+
+| V.3 5/17/16                          | Made more changes to on media        |
+|                                      | structures.                          |
++--------------------------------------+--------------------------------------+
+| V.3 5/26/16                          | Additional modifications to on media |
+|                                      | format.                              |
++--------------------------------------+--------------------------------------+
+| V.3 5/31/16                          | Additional changes and additions to  |
+|                                      | on media format section. Modified    |
+|                                      | Pmemfile\_ Interception section to   |
+|                                      | add more detail to the architecture  |
+|                                      | chosen.                              |
++--------------------------------------+--------------------------------------+
+| V.4 6/6/16                           | Completed initial persistent data    |
+|                                      | structure definitions. Added open    |
+|                                      | items section.                       |
++--------------------------------------+--------------------------------------+
+| V.4 6/7/16                           | Finished persistent data structure   |
+|                                      | design. Added file structure to      |
+|                                      | volatile section.                    |
++--------------------------------------+--------------------------------------+
+| V.4 6/8/16                           | More updates                         |
++--------------------------------------+--------------------------------------+
+| V.4 6/14/16                          | Changes to the volatile and          |
+|                                      | persistent structures. Added more    |
+|                                      | details to the Pmemfile\_ Intercept  |
+|                                      | Library. Added diagram to show       |
+|                                      | dependency resolution for lseek +    |
+|                                      | open ().                             |
++--------------------------------------+--------------------------------------+
+| V.4 10/3/16                          | Finalized volatile and persistent    |
+|                                      | data structure layout. Modified      |
+|                                      | interception library with new        |
+|                                      | architecture.                        |
++--------------------------------------+--------------------------------------+
+| V.4 10/17/16                         | Modified interception layer with new |
+|                                      | architecture.                        |
++--------------------------------------+--------------------------------------+
+| V.4 10/26/16                         | Changes based on internal review     |
+|                                      | with pmemfile team.                  |
++--------------------------------------+--------------------------------------+
+| V.4 11/8/16                          | More changes based on internal       |
+|                                      | review with pmemfile team            |
++--------------------------------------+--------------------------------------+
+| V.4 11/17/16                         | Finished persistent data structure   |
+|                                      | section.                             |
++--------------------------------------+--------------------------------------+
+| V.4 11/28/16                         | Updated based on review by pmemfile  |
+|                                      | team                                 |
++--------------------------------------+--------------------------------------+
+| V.4 1/4/17                           | Updated persistent data structures   |
++--------------------------------------+--------------------------------------+
+| V.4 2/21/17                          | Added more detail to Section 7,      |
+|                                      | design                               |
++--------------------------------------+--------------------------------------+
+| V.4 3/14/17                          | Added more detail to valid states    |
+|                                      | for persistent data structure        |
+|                                      | members                              |
++--------------------------------------+--------------------------------------+
+| V.4 3/16/17                          | Completed man pages and added links  |
+|                                      | to document                          |
++--------------------------------------+--------------------------------------+
+| V.4 3/21/17                          | Added Section 11.4, Consistency      |
+|                                      | Checking                             |
++--------------------------------------+--------------------------------------+
+| V.4 4/5/17                           | Modified High Level Architecture     |
+|                                      | Diagram to be more correct and       |
+|                                      | specific                             |
++--------------------------------------+--------------------------------------+
+| V.4 4/10/17                          | Cleaned up for github publication.   |
++--------------------------------------+--------------------------------------+
+| V.4 4/19/17                          | More cleanup for github publication. |
++--------------------------------------+--------------------------------------+
 
 <span id="_Toc452012197" class="anchor"><span id="_Toc480386174" class="anchor"></span></span>Document Overview
 ===============================================================================================================
@@ -47,13 +102,27 @@ throughout this architect specification. See the figure below for a
 graphical re-presentation of the terminology introduced in this
 terminology table.
 
-  **Terminology, Glossary Term**             **Description**
-  ------------------------------------------ ------------------------------------------------------------------------------------------------------------------------------
-  Persistent Memory, PMEM, CR-DIMM, NVDIMM   Byte addressable persistent memory.
-  NVM Programming Model(NPM)                 SNIA model for software supporting non-volatile memory. <http://www.snia.org/sites/default/files/NVMProgrammingModel_v1.pdf>
-  POSIX                                      A set of formal descriptions that provide a standard for the design of file systems.
-  System Call                                Interface between user space and kernel space
-  (g)libc                                    Standard POSIX library interface for Unix operating systems
++--------------------------------------+--------------------------------------+
+| **Terminology, Glossary Term**       | **Description**                      |
++======================================+======================================+
+| Persistent Memory, PMEM, CR-DIMM,    | Byte addressable persistent memory.  |
+| NVDIMM                               |                                      |
++--------------------------------------+--------------------------------------+
+| NVM Programming Model(NPM)           | SNIA model for software supporting   |
+|                                      | non-volatile memory.                 |
+|                                      | <http://www.snia.org/sites/default/f |
+|                                      | iles/NVMProgrammingModel_v1.pdf>     |
++--------------------------------------+--------------------------------------+
+| POSIX                                | A set of formal descriptions that    |
+|                                      | provide a standard for the design of |
+|                                      | file systems.                        |
++--------------------------------------+--------------------------------------+
+| System Call                          | Interface between user space and     |
+|                                      | kernel space                         |
++--------------------------------------+--------------------------------------+
+| (g)libc                              | Standard POSIX library interface for |
+|                                      | Unix operating systems               |
++--------------------------------------+--------------------------------------+
 
 <span id="_Toc452012199" class="anchor"><span id="_Toc480386176" class="anchor"></span></span>What is Pmemfile?
 ===============================================================================================================
@@ -528,363 +597,562 @@ below.
 
 Table Supported System Call Interfaces
 
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Syscall                                                      Supported   Exception   Exceptions noted
-  ------------------------------------------------------------ ----------- ----------- -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  <span id="RANGE!A2:A118" class="anchor"></span>SYS\_access   yes                     
-
-  SYS\_chdir                                                   yes                      
-
-  SYS\_chmod                                                   yes                     
-
-  SYS\_chown                                                   yes                     
-
-  SYS\_chroot                                                  no          yes         Pmemfile does not allow the process to change the root of the calling
-                                                                                       
-                                                                                       process. The root of the process is always the root of the Pmemfile file
-                                                                                       
-                                                                                       system.
-
-  SYS\_clone                                                   yes         yes         Clone is generally used to implement threads. An application must provide
-                                                                                       
-                                                                                       CLONE\_THREAD as a flag otherwise the command will fail. The following
-                                                                                       
-                                                                                       flags are not supported:
-                                                                                       
-                                                                                       CLONE\_IO
-                                                                                       
-                                                                                       CLONE\_NEWIPC
-                                                                                       
-                                                                                       CLONE\_NEWNET
-                                                                                       
-                                                                                       CLONE\_NEWNS
-                                                                                       
-                                                                                       CLONE\_NEWPID
-                                                                                       
-                                                                                       CLONE\_NEWUTS
-                                                                                       
-                                                                                       CLONE\_PARENT and related flags
-                                                                                       
-                                                                                       CLONE\_PID
-                                                                                       
-                                                                                       CLONE\_VFORK
-                                                                                       
-                                                                                       This flag is supported:
-                                                                                       
-                                                                                       CLONE\_VM:
-                                                                                       
-                                                                                       However, even if a thread is created with shared virtual
-                                                                                       
-                                                                                       memory the child will not be able access, create or modify any
-                                                                                       
-                                                                                       pmem-resident files.
-
-  SYS\_close                                                   yes                      
-
-  SYS\_creat                                                   yes         yes         See open
-
-  SYS\_dup                                                     yes         yes         When dup() is called the refcount on the Pmemfile handle in libpmemfile will be increased to keep track of number of references to a file.
-
-  SYS\_dup2                                                    no          yes         Same as dup()
-
-  SYS\_dup3                                                    yes         yes         Close on exec is always set
-                                                                                       
-                                                                                       Same rule as for dup, RE: refcount.
-
-  SYS\_epoll\_ctl                                              no          yes         We are not supporting polling of any kind at this time.
-
-  SYS\_epoll\_pwait                                            no          yes         Same as above
-
-  SYS\_epoll\_wait                                             no          yes         Same as above
-
-  SYS\_execve                                                  yes         yes         Pmemfile does not support execve when the executable file is a
-                                                                                       
-                                                                                       Pmem-resident file. If the ‘filename’ value is a pmem-resident file this
-                                                                                       
-                                                                                       will return an ENOEXEC.
-
-  SYS\_faccessat                                               yes                     
-
-  SYS\_fadvise64                                               no          yes         Pmemfile does not support fadvise64.
-
-  SYS\_fallocate                                               yes                     
-
-  SYS\_fchdir                                                  yes                      
-
-  SYS\_fchmod                                                  yes                      
-
-  SYS\_fchmodat                                                yes                      
-
-  SYS\_fchown                                                  yes                      
-
-  SYS\_fchownat                                                yes                      
-
-  SYS\_fcntl                                                   yes         yes         Pmemfile support fcntl with the following flag exceptions:
-                                                                                       
-                                                                                       Duplicating File Descriptors
-                                                                                       
-                                                                                       F\_DUPFD\_CLOEXEC
-                                                                                       
-                                                                                       Pmemfile always sets this flag. Since this flag is always set the libpmemfile layer will return success when consumer sets this. It will not go through interception layer.
-                                                                                       
-                                                                                       File Descriptor Flags
-                                                                                       
-                                                                                       F\_SETFD
-                                                                                       
-                                                                                       The only flag supported is O\_CLOEXEC.
-                                                                                       
-                                                                                       Pmemfile always sets this flag. Handling the same as DUPFD\_CLOEXEC.
-                                                                                       
-                                                                                       File Status
-                                                                                       
-                                                                                       F\_SETFL Is supported.
-                                                                                       
-                                                                                       O\_ASYNC - never, O\_DIRECT - always, O\_NONBLOCK – ignored
-                                                                                       
-                                                                                       In call cases a 0 will be returned.
-                                                                                       
-                                                                                       F\_GETFL is supported.
-                                                                                       
-                                                                                       Locking
-                                                                                       
-                                                                                       F\_SETLK, F\_SETLKW, F\_GETLK, F\_UNLCK
-                                                                                       
-                                                                                       Are supported.
-                                                                                       
-                                                                                       F\_SETOWN, F\_GETOWN\_EX, F\_SETOWN\_EX
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       F\_GETSIG, F\_SETSIG
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       F\_SETLEASE, F\_GETLEASE
-                                                                                       
-                                                                                       Not supported. Will return EINVAL
-                                                                                       
-                                                                                       F\_NOTIFY
-                                                                                       
-                                                                                       Not supported. Will return EINVAL
-                                                                                       
-                                                                                       MANDATORY LOCKS
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       LEASES
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       File and Directory change notifications
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       Pipe manipulation
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-                                                                                       
-                                                                                       File sealing
-                                                                                       
-                                                                                       Not supported. Will return EINVAL.
-
-  SYS\_fdatasync                                               yes         yes         All IO with Pmemfile is synchronous. Libpmemfile component will
-                                                                                       
-                                                                                       return 0 for this call.
-
-  SYS\_fgetxattr                                               no          yes         No xattrs support provided.
-
-  SYS\_flistxattr                                              no          yes         Same as above
-
-  SYS\_flock                                                   no          yes         Pmemfile does not support file locking. Will return EINVAL.
-
-  SYS\_fork                                                    yes         yes         Pmemfile does not provide multi-process support. A child created with
-                                                                                       
-                                                                                       fork() will not be able to access any existing pmem-resident files nor
-                                                                                       
-                                                                                       create new ones.
-
-  SYS\_fremovexattr                                            no          yes         No xattrs support
-
-  SYS\_fsetxattr                                               no          yes         Same as above
-
-  SYS\_fstat                                                   yes                      
-
-  SYS\_fstatfs                                                 yes                      
-
-  SYS\_fsync                                                   yes         yes         Libpmemfile component will return 0 for all file sync commands.
-
-  SYS\_ftruncate                                               yes                      
-
-  SYS\_ftruncate64                                             yes                     
-
-  SYS\_futimesat                                               yes                      
-
-  SYS\_getcwd                                                  yes                      
-
-  SYS\_getdents                                                yes         yes         This does not have a glibc wrapper. The real support is for readdir().
-                                                                                       
-                                                                                       Man page will reflect the support of readdir().
-
-  SYS\_getdents64                                              yes         yes         Same as above
-
-  SYS\_inotify\_add\_watch                                     no          yes         Pmemfile does not support any I/O event notification
-
-  SYS\_inotify\_rm\_watch                                      no          yes         Same as above
-
-  SYS\_io\_cancel                                              No          yes         Pmemfile will not support asynchronous IO for V1.0
-
-  SYS\_io\_destroy                                             no          yes         Same as above
-
-  SYS\_io\_getevents                                           no          yes         Same as above
-
-  SYS\_io\_setup                                               no          yes         Same as above
-
-  SYS\_io\_submit                                              no          yes         Same as above
-
-  SYS\_ioctl                                                   yes\*       yes         \*Pmemfile V1.0 will not provide support for this.
-
-  SYS\_lchown                                                  yes                      
-
-  SYS\_lgetxattr                                               no          yes         No xattrs support provided
-
-  SYS\_link                                                    yes                      
-
-  SYS\_linkat                                                  yes                      
-
-  SYS\_listxattr                                               no          yes         Same as all xattrs
-
-  SYS\_llistxattr                                              no          yes         Same as all xattrs
-
-  SYS\_lremovexattr                                            no          yes         Same as all xattrs
-
-  SYS\_lseek                                                   yes                      
-
-  SYS\_lsetxattr                                               no          yes         Same as all xattrs
-
-  SYS\_lstat                                                   yes                      
-
-  SYS\_mkdir                                                   yes                      
-
-  SYS\_mkdirat                                                 yes                      
-
-  SYS\_mknod                                                   no          yes         Pmemfile does not support block or character devices
-
-  SYS\_mknodat                                                 no          yes         Same as above
-
-  SYS\_mmap                                                    no?         yes         If Yes – mmap supports mmap for the following flags:
-                                                                                       
-                                                                                       MAP\_SHARED, MAP\_FIXED
-                                                                                       
-                                                                                       Protection flags supported:
-                                                                                       
-                                                                                       PROT\_READ and PROT\_WRITE is the default
-
-  SYS\_newfstatat                                              yes                      
-
-  SYS\_open                                                    yes         yes         Pmemfile supports open with the following flag exceptions:
-                                                                                       
-                                                                                       O\_ASYNC - EINVAL
-                                                                                       
-                                                                                       O\_CNOTTY – Always enabled
-                                                                                       
-                                                                                       Only supported for terminals, pseudo terminals, sockets and fifo’s
-                                                                                       
-                                                                                       Pmemfile does not support these devices.
-                                                                                       
-                                                                                       O\_DIRECT – Always enabled.
-                                                                                       
-                                                                                       O\_DSYNC – Always enabled.
-                                                                                       
-                                                                                       O\_NONBLOCK – Ignored.
-                                                                                       
-                                                                                       O\_SYNC – Always enabled.
-                                                                                       
-                                                                                       O\_CLOEXEC – Always enabled.
-
-  SYS\_open\_by\_handle\_at                                    yes\*       yes         \*Not in V1.0
-
-  SYS\_openat                                                  yes                      
-
-  SYS\_poll                                                    no          yes         Pmemfile does not support any event driven file management
-
-  SYS\_ppoll                                                   no          yes         Same as above
-
-  SYS\_pread/64                                                yes                      
-
-  SYS\_pselect                                                 no          yes         Pmemfile does not support any event driven file management.
-
-  SYS\_pwrite64                                                yes                      
-
-  SYS\_pwritev                                                 yes                      
-
-  SYS\_read                                                    yes                      
-
-  SYS\_readahead                                               no          Yes         Is not supported. Pmemfile does not support caching as it always operates in direct access mode.
-
-  SYS\_readlink                                                yes                      
-
-  SYS\_readlinkat                                              yes                      
-
-  SYS\_readv                                                   yes                      
-
-  SYS\_removexattr                                             no          yes         Pmemfile does not support xattrs
-
-  SYS\_rename                                                  yes         yes         Pmemfile does not support renaming files between Pmemfile file systems.
-
-  SYS\_renameat                                                yes         yes         Same as above
-
-  SYS\_renameat2                                               no          yes         
-
-  SYS\_rmdir                                                   yes                      
-
-  SYS\_select                                                  no          yes         Same as pselect
-
-  SYS\_setxattr                                                no          yes         Same as other xattrs support
-
-  SYS\_sendfile                                                yes\*       yes         Pmemfile supports this if both in fd and out fd are pmem-resident files.
-                                                                                       
-                                                                                       \*Not supported in V1.0
-
-  SYS\_splice                                                  yes\*       yes         Pmemfile supports this if both the out fd and in fd are pmem-resident files.
-                                                                                       
-                                                                                       \* Not supported in V1.0
-
-  SYS\_stat                                                    yes                      
-
-  SYS\_statfs                                                  yes                      
-
-  SYS\_swapoff                                                 no          yes         Pmemfile cannot be used as a swap device
-
-  SYS\_symlink                                                 yes                      
-
-  SYS\_symlinkat                                               yes                      
-
-  SYS\_sync                                                    yes         yes         Pmemfile treats this as a no-op since all IO is synchronous.
-
-  SYS\_sync\_file\_range                                       yes         yes         Pmemfile treats this as a no-op. Pmemfile IO is always synchronous.
-
-  SYS\_syncfs                                                  yes         yes         Same as above
-
-  SYS\_sysfs                                                   yes                      
-
-  SYS\_truncate                                                yes                      
-
-  SYS\_unlink                                                  yes                      
-
-  SYS\_unlinkat                                                yes                      
-
-  SYS\_utime                                                   yes                      
-
-  SYS\_utimensat                                               yes                      
-
-  SYS\_utimes                                                  yes                      
-
-  SYS\_vfork                                                   no          yes         Pmemfile does not support this call.
-
-  SYS\_write                                                   yes                      
-
-  SYS\_writev                                                  yes                      
-  ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++--------------------+--------------------+--------------------+--------------------+
+| Syscall            | Supported          | Exception          | Exceptions noted   |
++====================+====================+====================+====================+
+| <span              | yes                |                    |                    |
+| id="RANGE!A2:A118" |                    |                    |                    |
+| class="anchor"></s |                    |                    |                    |
+| pan>SYS\_access    |                    |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_chdir         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_chmod         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_chown         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_chroot        | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | allow the process  |
+|                    |                    |                    | to change the root |
+|                    |                    |                    | of the calling     |
+|                    |                    |                    |                    |
+|                    |                    |                    | process. The root  |
+|                    |                    |                    | of the process is  |
+|                    |                    |                    | always the root of |
+|                    |                    |                    | the Pmemfile file  |
+|                    |                    |                    |                    |
+|                    |                    |                    | system.            |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_clone         | yes                | yes                | Clone is generally |
+|                    |                    |                    | used to implement  |
+|                    |                    |                    | threads. An        |
+|                    |                    |                    | application must   |
+|                    |                    |                    | provide            |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_THREAD as a |
+|                    |                    |                    | flag otherwise the |
+|                    |                    |                    | command will fail. |
+|                    |                    |                    | The following      |
+|                    |                    |                    |                    |
+|                    |                    |                    | flags are not      |
+|                    |                    |                    | supported:         |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_IO          |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_NEWIPC      |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_NEWNET      |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_NEWNS       |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_NEWPID      |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_NEWUTS      |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_PARENT and  |
+|                    |                    |                    | related flags      |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_PID         |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_VFORK       |
+|                    |                    |                    |                    |
+|                    |                    |                    | This flag is       |
+|                    |                    |                    | supported:         |
+|                    |                    |                    |                    |
+|                    |                    |                    | CLONE\_VM:         |
+|                    |                    |                    |                    |
+|                    |                    |                    | However, even if a |
+|                    |                    |                    | thread is created  |
+|                    |                    |                    | with shared        |
+|                    |                    |                    | virtual            |
+|                    |                    |                    |                    |
+|                    |                    |                    | memory the child   |
+|                    |                    |                    | will not be able   |
+|                    |                    |                    | access, create or  |
+|                    |                    |                    | modify any         |
+|                    |                    |                    |                    |
+|                    |                    |                    | pmem-resident      |
+|                    |                    |                    | files.             |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_close         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_creat         | yes                | yes                | See open           |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_dup           | yes                | yes                | When dup() is      |
+|                    |                    |                    | called the         |
+|                    |                    |                    | refcount on the    |
+|                    |                    |                    | Pmemfile handle in |
+|                    |                    |                    | libpmemfile will   |
+|                    |                    |                    | be increased to    |
+|                    |                    |                    | keep track of      |
+|                    |                    |                    | number of          |
+|                    |                    |                    | references to a    |
+|                    |                    |                    | file.              |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_dup2          | no                 | yes                | Same as dup()      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_dup3          | yes                | yes                | Close on exec is   |
+|                    |                    |                    | always set         |
+|                    |                    |                    |                    |
+|                    |                    |                    | Same rule as for   |
+|                    |                    |                    | dup, RE: refcount. |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_epoll\_ctl    | no                 | yes                | We are not         |
+|                    |                    |                    | supporting polling |
+|                    |                    |                    | of any kind at     |
+|                    |                    |                    | this time.         |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_epoll\_pwait  | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_epoll\_wait   | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_execve        | yes                | yes                | Pmemfile does not  |
+|                    |                    |                    | support execve     |
+|                    |                    |                    | when the           |
+|                    |                    |                    | executable file is |
+|                    |                    |                    | a                  |
+|                    |                    |                    |                    |
+|                    |                    |                    | Pmem-resident      |
+|                    |                    |                    | file. If the       |
+|                    |                    |                    | ‘filename’ value   |
+|                    |                    |                    | is a pmem-resident |
+|                    |                    |                    | file this          |
+|                    |                    |                    |                    |
+|                    |                    |                    | will return an     |
+|                    |                    |                    | ENOEXEC.           |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_faccessat     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fadvise64     | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support fadvise64. |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fallocate     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fchdir        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fchmod        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fchmodat      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fchown        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fchownat      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fcntl         | yes                | yes                | Pmemfile support   |
+|                    |                    |                    | fcntl with the     |
+|                    |                    |                    | following flag     |
+|                    |                    |                    | exceptions:        |
+|                    |                    |                    |                    |
+|                    |                    |                    | Duplicating File   |
+|                    |                    |                    | Descriptors        |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_DUPFD\_CLOEXEC  |
+|                    |                    |                    |                    |
+|                    |                    |                    | Pmemfile always    |
+|                    |                    |                    | sets this flag.    |
+|                    |                    |                    | Since this flag is |
+|                    |                    |                    | always set the     |
+|                    |                    |                    | libpmemfile layer  |
+|                    |                    |                    | will return        |
+|                    |                    |                    | success when       |
+|                    |                    |                    | consumer sets      |
+|                    |                    |                    | this. It will not  |
+|                    |                    |                    | go through         |
+|                    |                    |                    | interception       |
+|                    |                    |                    | layer.             |
+|                    |                    |                    |                    |
+|                    |                    |                    | File Descriptor    |
+|                    |                    |                    | Flags              |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_SETFD           |
+|                    |                    |                    |                    |
+|                    |                    |                    | The only flag      |
+|                    |                    |                    | supported is       |
+|                    |                    |                    | O\_CLOEXEC.        |
+|                    |                    |                    |                    |
+|                    |                    |                    | Pmemfile always    |
+|                    |                    |                    | sets this flag.    |
+|                    |                    |                    | Handling the same  |
+|                    |                    |                    | as DUPFD\_CLOEXEC. |
+|                    |                    |                    |                    |
+|                    |                    |                    | File Status        |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_SETFL Is        |
+|                    |                    |                    | supported.         |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_ASYNC - never,  |
+|                    |                    |                    | O\_DIRECT -        |
+|                    |                    |                    | always,            |
+|                    |                    |                    | O\_NONBLOCK –      |
+|                    |                    |                    | ignored            |
+|                    |                    |                    |                    |
+|                    |                    |                    | In call cases a 0  |
+|                    |                    |                    | will be returned.  |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_GETFL is        |
+|                    |                    |                    | supported.         |
+|                    |                    |                    |                    |
+|                    |                    |                    | Locking            |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_SETLK,          |
+|                    |                    |                    | F\_SETLKW,         |
+|                    |                    |                    | F\_GETLK, F\_UNLCK |
+|                    |                    |                    |                    |
+|                    |                    |                    | Are supported.     |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_SETOWN,         |
+|                    |                    |                    | F\_GETOWN\_EX,     |
+|                    |                    |                    | F\_SETOWN\_EX      |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_GETSIG,         |
+|                    |                    |                    | F\_SETSIG          |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_SETLEASE,       |
+|                    |                    |                    | F\_GETLEASE        |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return EINVAL |
+|                    |                    |                    |                    |
+|                    |                    |                    | F\_NOTIFY          |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return EINVAL |
+|                    |                    |                    |                    |
+|                    |                    |                    | MANDATORY LOCKS    |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | LEASES             |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | File and Directory |
+|                    |                    |                    | change             |
+|                    |                    |                    | notifications      |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | Pipe manipulation  |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
+|                    |                    |                    |                    |
+|                    |                    |                    | File sealing       |
+|                    |                    |                    |                    |
+|                    |                    |                    | Not supported.     |
+|                    |                    |                    | Will return        |
+|                    |                    |                    | EINVAL.            |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fdatasync     | yes                | yes                | All IO with        |
+|                    |                    |                    | Pmemfile is        |
+|                    |                    |                    | synchronous.       |
+|                    |                    |                    | Libpmemfile        |
+|                    |                    |                    | component will     |
+|                    |                    |                    |                    |
+|                    |                    |                    | return 0 for this  |
+|                    |                    |                    | call.              |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fgetxattr     | no                 | yes                | No xattrs support  |
+|                    |                    |                    | provided.          |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_flistxattr    | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_flock         | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support file       |
+|                    |                    |                    | locking. Will      |
+|                    |                    |                    | return EINVAL.     |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fork          | yes                | yes                | Pmemfile does not  |
+|                    |                    |                    | provide            |
+|                    |                    |                    | multi-process      |
+|                    |                    |                    | support. A child   |
+|                    |                    |                    | created with       |
+|                    |                    |                    |                    |
+|                    |                    |                    | fork() will not be |
+|                    |                    |                    | able to access any |
+|                    |                    |                    | existing           |
+|                    |                    |                    | pmem-resident      |
+|                    |                    |                    | files nor          |
+|                    |                    |                    |                    |
+|                    |                    |                    | create new ones.   |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fremovexattr  | no                 | yes                | No xattrs support  |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fsetxattr     | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fstat         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fstatfs       | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_fsync         | yes                | yes                | Libpmemfile        |
+|                    |                    |                    | component will     |
+|                    |                    |                    | return 0 for all   |
+|                    |                    |                    | file sync          |
+|                    |                    |                    | commands.          |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_ftruncate     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_ftruncate64   | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_futimesat     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_getcwd        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_getdents      | yes                | yes                | This does not have |
+|                    |                    |                    | a glibc wrapper.   |
+|                    |                    |                    | The real support   |
+|                    |                    |                    | is for readdir().  |
+|                    |                    |                    |                    |
+|                    |                    |                    | Man page will      |
+|                    |                    |                    | reflect the        |
+|                    |                    |                    | support of         |
+|                    |                    |                    | readdir().         |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_getdents64    | yes                | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_inotify\_add\ | no                 | yes                | Pmemfile does not  |
+| _watch             |                    |                    | support any I/O    |
+|                    |                    |                    | event notification |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_inotify\_rm\_ | no                 | yes                | Same as above      |
+| watch              |                    |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_io\_cancel    | No                 | yes                | Pmemfile will not  |
+|                    |                    |                    | support            |
+|                    |                    |                    | asynchronous IO    |
+|                    |                    |                    | for V1.0           |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_io\_destroy   | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_io\_getevents | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_io\_setup     | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_io\_submit    | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_ioctl         | yes\*              | yes                | \*Pmemfile V1.0    |
+|                    |                    |                    | will not provide   |
+|                    |                    |                    | support for this.  |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lchown        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lgetxattr     | no                 | yes                | No xattrs support  |
+|                    |                    |                    | provided           |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_link          | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_linkat        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_listxattr     | no                 | yes                | Same as all xattrs |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_llistxattr    | no                 | yes                | Same as all xattrs |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lremovexattr  | no                 | yes                | Same as all xattrs |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lseek         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lsetxattr     | no                 | yes                | Same as all xattrs |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_lstat         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_mkdir         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_mkdirat       | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_mknod         | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support block or   |
+|                    |                    |                    | character devices  |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_mknodat       | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_mmap          | no?                | yes                | If Yes – mmap      |
+|                    |                    |                    | supports mmap for  |
+|                    |                    |                    | the following      |
+|                    |                    |                    | flags:             |
+|                    |                    |                    |                    |
+|                    |                    |                    | MAP\_SHARED,       |
+|                    |                    |                    | MAP\_FIXED         |
+|                    |                    |                    |                    |
+|                    |                    |                    | Protection flags   |
+|                    |                    |                    | supported:         |
+|                    |                    |                    |                    |
+|                    |                    |                    | PROT\_READ and     |
+|                    |                    |                    | PROT\_WRITE is the |
+|                    |                    |                    | default            |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_newfstatat    | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_open          | yes                | yes                | Pmemfile supports  |
+|                    |                    |                    | open with the      |
+|                    |                    |                    | following flag     |
+|                    |                    |                    | exceptions:        |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_ASYNC - EINVAL  |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_CNOTTY – Always |
+|                    |                    |                    | enabled            |
+|                    |                    |                    |                    |
+|                    |                    |                    | Only supported for |
+|                    |                    |                    | terminals, pseudo  |
+|                    |                    |                    | terminals, sockets |
+|                    |                    |                    | and fifo’s         |
+|                    |                    |                    |                    |
+|                    |                    |                    | Pmemfile does not  |
+|                    |                    |                    | support these      |
+|                    |                    |                    | devices.           |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_DIRECT – Always |
+|                    |                    |                    | enabled.           |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_DSYNC – Always  |
+|                    |                    |                    | enabled.           |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_NONBLOCK –      |
+|                    |                    |                    | Ignored.           |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_SYNC – Always   |
+|                    |                    |                    | enabled.           |
+|                    |                    |                    |                    |
+|                    |                    |                    | O\_CLOEXEC –       |
+|                    |                    |                    | Always enabled.    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_open\_by\_han | yes\*              | yes                | \*Not in V1.0      |
+| dle\_at            |                    |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_openat        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_poll          | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support any event  |
+|                    |                    |                    | driven file        |
+|                    |                    |                    | management         |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_ppoll         | no                 | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_pread/64      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_pselect       | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support any event  |
+|                    |                    |                    | driven file        |
+|                    |                    |                    | management.        |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_pwrite64      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_pwritev       | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_read          | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_readahead     | no                 | Yes                | Is not supported.  |
+|                    |                    |                    | Pmemfile does not  |
+|                    |                    |                    | support caching as |
+|                    |                    |                    | it always operates |
+|                    |                    |                    | in direct access   |
+|                    |                    |                    | mode.              |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_readlink      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_readlinkat    | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_readv         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_removexattr   | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support xattrs     |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_rename        | yes                | yes                | Pmemfile does not  |
+|                    |                    |                    | support renaming   |
+|                    |                    |                    | files between      |
+|                    |                    |                    | Pmemfile file      |
+|                    |                    |                    | systems.           |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_renameat      | yes                | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_renameat2     | no                 | yes                |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_rmdir         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_select        | no                 | yes                | Same as pselect    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_setxattr      | no                 | yes                | Same as other      |
+|                    |                    |                    | xattrs support     |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_sendfile      | yes\*              | yes                | Pmemfile supports  |
+|                    |                    |                    | this if both in fd |
+|                    |                    |                    | and out fd are     |
+|                    |                    |                    | pmem-resident      |
+|                    |                    |                    | files.             |
+|                    |                    |                    |                    |
+|                    |                    |                    | \*Not supported in |
+|                    |                    |                    | V1.0               |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_splice        | yes\*              | yes                | Pmemfile supports  |
+|                    |                    |                    | this if both the   |
+|                    |                    |                    | out fd and in fd   |
+|                    |                    |                    | are pmem-resident  |
+|                    |                    |                    | files.             |
+|                    |                    |                    |                    |
+|                    |                    |                    | \* Not supported   |
+|                    |                    |                    | in V1.0            |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_stat          | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_statfs        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_swapoff       | no                 | yes                | Pmemfile cannot be |
+|                    |                    |                    | used as a swap     |
+|                    |                    |                    | device             |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_symlink       | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_symlinkat     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_sync          | yes                | yes                | Pmemfile treats    |
+|                    |                    |                    | this as a no-op    |
+|                    |                    |                    | since all IO is    |
+|                    |                    |                    | synchronous.       |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_sync\_file\_r | yes                | yes                | Pmemfile treats    |
+| ange               |                    |                    | this as a no-op.   |
+|                    |                    |                    | Pmemfile IO is     |
+|                    |                    |                    | always             |
+|                    |                    |                    | synchronous.       |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_syncfs        | yes                | yes                | Same as above      |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_sysfs         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_truncate      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_unlink        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_unlinkat      | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_utime         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_utimensat     | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_utimes        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_vfork         | no                 | yes                | Pmemfile does not  |
+|                    |                    |                    | support this call. |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_write         | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
+| SYS\_writev        | yes                |                    |                    |
++--------------------+--------------------+--------------------+--------------------+
 
 libpmemfile-posix Interface And System Call Support
 ===================================================
